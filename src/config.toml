@@ -1,0 +1,21 @@
+# minio相关配置
+Endpoint = "localhost:9000"
+AccessKeyID = "minio"
+SecretAccessKey = "12345678"
+UseSSL = false
+
+# 服务监听端口
+Port = 8888
+# Token验证秘钥
+JWTSecret = "gznb1@3$"
+# 文件大小限制 单位M
+FileSizeLimit = 5
+# 缓存大小 单位M
+CacheSize = 1024
+# 允许的文件类型
+FileTypes = "png|jpg|jpeg"
+
+# http2相关配置
+UseHTTP2 = false 
+CertPath = "../test/localhost.cert"
+KeyPath = "../test/localhost.key"
