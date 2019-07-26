@@ -7,7 +7,7 @@ UseSSL = false
 # 服务监听端口
 Port = 8888
 # Token验证秘钥
-JWTSecret = "gznb1@3$"
+JWTSecret = "up@2019"
 # 文件大小限制 单位M
 FileSizeLimit = 5
 # 缓存大小 单位M
