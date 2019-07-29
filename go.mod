@@ -12,6 +12,7 @@ require (
 	github.com/julienschmidt/httprouter v1.2.0
 	github.com/minio/minio-go v6.0.14+incompatible
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
+	github.com/mitchellh/gox v1.0.1 // indirect
 	github.com/pquerna/ffjson v0.0.0-20181028064349-e517b90714f7
 	github.com/rs/cors v1.6.0
 	github.com/smartystreets/goconvey v0.0.0-20190710185942-9d28bd7c0945 // indirect

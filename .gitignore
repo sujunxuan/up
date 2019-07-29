@@ -12,3 +12,4 @@
 *.out
 /.idea/*
 /src/log/*
+/release/up
