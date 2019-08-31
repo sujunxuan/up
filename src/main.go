@@ -41,10 +41,12 @@ func main() {
 	router.PUT("/:bucket/:token", alter)
 
 	// 允许跨域
-	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"*"},
-		AllowCredentials: true,
-	})
+	//c := cors.New(cors.Options{
+	//	AllowedOrigins:   []string{"*"},
+	//	AllowCredentials: true,
+	//})
+
+	c := cors.AllowAll()
 
 	server := http.Server{
 		Addr:    fmt.Sprintf(":%d", AppConfig.Port),
@@ -55,7 +57,7 @@ func main() {
 
 	// 支持HTTP2
 	if AppConfig.UseHTTP2 {
-		http2.ConfigureServer(&server, nil)
+		_ = http2.ConfigureServer(&server, nil)
 		log.Fatal(server.ListenAndServeTLS(AppConfig.CertPath, AppConfig.KeyPath))
 	} else {
 		log.Fatal(server.ListenAndServe())
@@ -63,7 +65,7 @@ func main() {
 }
 
 func index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	fmt.Fprint(w, "Thank you use up.\n")
+	_, _ = fmt.Fprint(w, "Thank you use up.\n")
 }
 
 func getV2(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -77,19 +79,19 @@ func getV2(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("Content-Length", strconv.FormatInt(pic.Info.Size, 10))
 	w.Header().Set("Content-Type", pic.Info.ContentType)
 	w.Header().Set("ETag", pic.Info.ETag)
-	w.Write(pic.Buf)
+	_, _ = w.Write(pic.Buf)
 }
 
 func upload(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	isAuth := auth(ps.ByName("token"))
 	if !isAuth {
 		w.WriteHeader(401)
-		w.Write([]byte("401 token invalid"))
+		_, _ = w.Write([]byte("401 token invalid"))
 		return
 	}
 
 	max, _ := strconv.ParseInt(r.Header.Get("content-length"), 10, 64)
-	r.ParseMultipartForm(max)
+	_ = r.ParseMultipartForm(max)
 
 	files := r.MultipartForm.File["files"]
 	if len(files) < 1 {
@@ -100,14 +102,14 @@ func upload(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	isAllow := fileTypeCheck(files)
 	if !isAllow {
 		w.WriteHeader(415)
-		w.Write([]byte("415 file types are not allowed"))
+		_, _ = w.Write([]byte("415 file types are not allowed"))
 		return
 	}
 
 	isNotTooBig := fileSizeCheck(max, len(files))
 	if !isNotTooBig {
 		w.WriteHeader(413)
-		w.Write([]byte("413 file too large"))
+		_, _ = w.Write([]byte("413 file too large"))
 		return
 	}
 
@@ -199,14 +201,14 @@ func upload(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(json)
+	_, _ = w.Write(json)
 }
 
 func alter(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	isAuth := auth(ps.ByName("token"))
 	if !isAuth {
 		w.WriteHeader(401)
-		w.Write([]byte("401 token invalid"))
+		_, _ = w.Write([]byte("401 token invalid"))
 		return
 	}
 }
@@ -235,7 +237,7 @@ func fileTypeCheck(files []*multipart.FileHeader) bool {
 	for _, file := range files {
 		fileName := strings.Split(file.Filename, ".")
 		fileType := fileName[len(fileName)-1]
-		if !strings.Contains(AppConfig.FileTypes, fileType) {
+		if !strings.Contains(AppConfig.FileTypes, strings.ToLower(fileType)) {
 			return false
 		}
 	}
